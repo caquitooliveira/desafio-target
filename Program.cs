@@ -19,12 +19,40 @@ if (dados is null)
 }
 
 var cultura = new CultureInfo("pt-BR");
+var comissoes = new Dictionary<string, decimal>();
 
 foreach (var venda in dados.Vendas)
 {
-    Console.WriteLine(
-        $"{venda.Vendedor}: {venda.Valor.ToString("C2", cultura)}"
-    );
+    decimal taxa;
+
+    if (venda.Valor < 100m)
+    {
+        taxa = 0m;
+    }
+    else if (venda.Valor < 500m)
+    {
+        taxa = 0.01m;
+    }
+    else
+    {
+        taxa = 0.05m;
+    }
+
+    decimal comissao = venda.Valor * taxa;
+
+    if (!comissoes.ContainsKey(venda.Vendedor))
+    {
+        comissoes[venda.Vendedor] = 0m;
+    }
+
+    comissoes[venda.Vendedor] += comissao;
 }
 
-Console.WriteLine($"Total de vendas carregadas: {dados.Vendas.Count}");
+Console.WriteLine("COMISSÕES POR VENDEDOR");
+
+foreach (var resultado in comissoes)
+{
+    Console.WriteLine(
+        $"{resultado.Key}: {resultado.Value.ToString("C2", cultura)}"
+    );
+}
