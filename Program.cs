@@ -2,6 +2,41 @@
 using System.Text.Json;
 using DesafioTarget.Modelos;
 
+while (true)
+{
+    Console.WriteLine();
+    Console.WriteLine("DESAFIO TARGET");
+    Console.WriteLine("1 - Calcular comissões");
+    Console.WriteLine("2 - Movimentar estoque");
+    Console.WriteLine("0 - Sair");
+    Console.Write("Escolha uma opção: ");
+
+    var opcao = Console.ReadLine();
+
+    if (opcao is null || opcao == "0")
+    {
+        break;
+    }
+
+    switch (opcao)
+    {
+        case "1":
+            ExibirComissoes();
+            break;
+
+        case "2":
+            Console.WriteLine("Movimentação de estoque em desenvolvimento.");
+            break;
+
+        default:
+            Console.WriteLine("Opção inválida.");
+            break;
+    }
+}
+
+void ExibirComissoes()
+{
+
 var caminho = Path.Combine("Dados", "vendas.json");
 var json = File.ReadAllText(caminho);
 
@@ -55,4 +90,5 @@ foreach (var resultado in comissoes)
     Console.WriteLine(
         $"{resultado.Key}: {resultado.Value.ToString("C2", cultura)}"
     );
+}
 }
