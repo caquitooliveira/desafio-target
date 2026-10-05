@@ -29,6 +29,7 @@ while (true)
     Console.WriteLine("DESAFIO TARGET");
     Console.WriteLine("1 - Calcular comissões");
     Console.WriteLine("2 - Movimentar estoque");
+    Console.WriteLine("3 - Calcular juros");
     Console.WriteLine("0 - Sair");
     Console.Write("Escolha uma opção: ");
 
@@ -47,6 +48,10 @@ while (true)
 
         case "2":
             MovimentarEstoque();
+            break;
+
+        case "3":
+            CalcularJuros();
             break;
 
         default:
@@ -103,6 +108,7 @@ void ExibirComissoes()
         comissoes[venda.Vendedor] += comissao;
     }
 
+    Console.WriteLine();
     Console.WriteLine("COMISSÕES POR VENDEDOR");
 
     foreach (var resultado in comissoes)
@@ -211,4 +217,65 @@ void MovimentarEstoque()
     Console.WriteLine($"Descrição: {movimentacao.Descricao}");
     Console.WriteLine($"Quantidade: {movimentacao.Quantidade}");
     Console.WriteLine($"Estoque final: {movimentacao.EstoqueFinal}");
+}
+
+void CalcularJuros()
+{
+    var cultura = new CultureInfo("pt-BR");
+
+    Console.Write("Valor original (ex.: 100,00): ");
+
+    if (!decimal.TryParse(
+        Console.ReadLine(),
+        NumberStyles.AllowDecimalPoint,
+        cultura,
+        out decimal valor
+    ) || valor <= 0m)
+    {
+        Console.WriteLine(
+            "Informe um valor positivo, usando vírgula para os centavos."
+        );
+        return;
+    }
+
+    Console.Write("Data de vencimento (dd/MM/aaaa): ");
+
+    if (!DateTime.TryParseExact(
+        Console.ReadLine(),
+        "dd/MM/yyyy",
+        cultura,
+        DateTimeStyles.None,
+        out DateTime vencimento
+    ))
+    {
+        Console.WriteLine("Data inválida. Use o formato dd/MM/aaaa.");
+        return;
+    }
+
+    var hoje = DateTime.Today;
+    int diasAtraso = Math.Max(0, (hoje - vencimento.Date).Days);
+
+    try
+    {
+        decimal juros = decimal.Round(
+            valor * 0.025m * diasAtraso,
+            2,
+            MidpointRounding.AwayFromZero
+        );
+
+        decimal total = valor + juros;
+
+        Console.WriteLine();
+        Console.WriteLine($"Data do cálculo: {hoje:dd/MM/yyyy}");
+        Console.WriteLine($"Dias de atraso: {diasAtraso}");
+        Console.WriteLine($"Valor original: {valor.ToString("C2", cultura)}");
+        Console.WriteLine($"Juros: {juros.ToString("C2", cultura)}");
+        Console.WriteLine($"Total: {total.ToString("C2", cultura)}");
+    }
+    catch (OverflowException)
+    {
+        Console.WriteLine(
+            "O valor informado é muito alto para realizar o cálculo."
+        );
+    }
 }
